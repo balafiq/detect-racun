@@ -4,45 +4,42 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <meta name="theme-color" content="#c8f0b4" />
+  <title>HIPER Apps – Semak Racun</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@500;700;800;900&display=swap" rel="stylesheet" />
-  <title>HIPER Apps – Pengesan Racun Berdaftar</title>
-  <link rel="stylesheet" href="style.css?v=4" />
+  <link rel="stylesheet" href="style.css?v=5" />
 </head>
 <body>
   <header class="topbar">
     <div class="brand">
-      <span class="logo" aria-hidden="true">🌱</span>
+      <span class="logo" aria-hidden="true"><i class="e sway">🌱</i></span>
       <div>
         <h1>HIPER Apps</h1>
-        <p>Pengesan Racun Berdaftar &amp; Tidak Berdaftar</p>
+        <p>Semak Racun Berdaftar</p>
       </div>
     </div>
-    <span class="deco d1" aria-hidden="true">🍃</span>
-    <span class="deco d2" aria-hidden="true">🌼</span>
-    <span class="deco d3" aria-hidden="true">🍀</span>
+    <span class="deco d1" aria-hidden="true"><i class="e float">🍃</i></span>
+    <span class="deco d2" aria-hidden="true"><i class="e spin">🌼</i></span>
+    <span class="deco d3" aria-hidden="true"><i class="e float slow">🍀</i></span>
   </header>
 
   <main class="wrap">
     <section class="card intro">
       <div class="hello">
-        <span class="mascot" aria-hidden="true">🧑‍🌾</span>
-        <div>
-          <h2>Hai! Jom semak racun anda 👋</h2>
-          <p>Kami bantu kenal pasti sama ada racun itu <b class="ok-text">berdaftar</b> atau <b class="bad-text">tidak berdaftar</b>.</p>
-        </div>
+        <span class="mascot" aria-hidden="true"><i class="e wave">👋</i></span>
+        <h2>Hai! Jom semak racun anda</h2>
       </div>
       <ol class="steps">
-        <li><span>1</span>Tekan kamera / pilih gambar</li>
-        <li><span>2</span>Halakan ke label racun</li>
-        <li><span>3</span>Lihat keputusan</li>
+        <li><i class="e hop" style="--d:0s">📷</i>Ambil gambar</li>
+        <li><i class="e hop" style="--d:.3s">🏷️</i>Halakan ke label</li>
+        <li><i class="e hop" style="--d:.6s">✅</i>Lihat keputusan</li>
       </ol>
     </section>
 
     <div class="tabs" role="tablist">
-      <button class="tab active" data-tab="camera" role="tab" aria-selected="true">📷 Kamera</button>
-      <button class="tab" data-tab="upload" role="tab" aria-selected="false">🖼️ Muat Naik Gambar</button>
+      <button class="tab active" data-tab="camera" role="tab" aria-selected="true"><i class="e">📷</i> Kamera</button>
+      <button class="tab" data-tab="upload" role="tab" aria-selected="false"><i class="e">🖼️</i> Gambar</button>
     </div>
 
     <section class="card" id="panel-camera">
@@ -51,23 +48,21 @@
         <div class="guide" aria-hidden="true"></div>
         <div class="pill hidden" id="pill"></div>
         <div class="placeholder" id="camPlaceholder">
-          <span>📷</span>
-          <p>Kamera belum dihidupkan</p>
-          <small>Tekan butang hijau di bawah</small>
+          <i class="e bob">📷</i>
+          <p>Tekan Mula Kamera</p>
         </div>
       </div>
       <div class="actions">
         <button class="btn primary" id="btnStart" disabled>⏳ Memuatkan…</button>
-        <button class="btn" id="btnFlip" disabled>🔄 Tukar Kamera</button>
+        <button class="btn" id="btnFlip" disabled><i class="e flip">🔄</i> Tukar</button>
       </div>
-      <label class="btn snap">📸 Ambil Gambar (kamera telefon)
+      <label class="btn snap"><i class="e flash">📸</i> Ambil Gambar
         <input type="file" id="snap" accept="image/*" capture="environment" />
       </label>
       <div class="camhelp hidden" id="camHelp">
         <p id="camHelpText"></p>
       </div>
       <a class="btn opentab hidden" id="openTab" target="_blank" rel="noopener">↗ Buka dalam tab baharu</a>
-      <p class="hint">Letakkan label racun di dalam kotak. Pastikan cahaya mencukupi.</p>
     </section>
 
     <section class="card hidden" id="panel-upload">
@@ -75,9 +70,8 @@
         <input type="file" id="file" accept="image/*" />
         <img id="preview" alt="" class="hidden" />
         <div id="dropText">
-          <span class="bounce">🖼️</span>
-          <p><b>Ketik untuk pilih gambar</b><br />atau seret ke sini</p>
-          <small>JPG / PNG</small>
+          <i class="e bob">🖼️</i>
+          <p><b>Ketik untuk pilih gambar</b></p>
         </div>
       </label>
     </section>
@@ -86,38 +80,33 @@
       <div class="status" id="status">
         <span class="icon" id="statusIcon">⏳</span>
         <div>
-          <div class="label" id="statusLabel">Memuatkan model…</div>
-          <div class="sub" id="statusSub">Sila tunggu sebentar</div>
+          <div class="label" id="statusLabel">Memuatkan…</div>
+          <div class="sub" id="statusSub"></div>
         </div>
       </div>
       <div class="conf hidden" id="confWrap">
         <div class="conf-row"><span>Keyakinan</span><b id="confPct">0%</b></div>
         <div class="bar"><div id="confBar"></div></div>
       </div>
-      <details class="detail">
-        <summary>Lihat butiran ramalan</summary>
-        <ul id="probs"></ul>
-      </details>
     </section>
 
     <section class="card tips">
-      <h3>💡 Panduan ringkas</h3>
+      <h3><i class="e glow">💡</i> Tips</h3>
       <ul class="tiplist">
-        <li><span>🏷️</span><div>Racun berdaftar mempunyai <b>label lengkap</b> dan <b>nombor pendaftaran</b> Lembaga Racun Makhluk Perosak (LRMP).</div></li>
-        <li><span>🚫</span><div>Botol tanpa label, label tulisan tangan atau tiada nombor pendaftaran berkemungkinan <b>tidak berdaftar</b>.</div></li>
-        <li><span>☀️</span><div>Ambil gambar di tempat <b>terang</b> dan pastikan label <b>jelas</b> kelihatan.</div></li>
-        <li><span>👩‍🌾</span><div>Jika ragu-ragu, <b>rujuk Agen Pengembangan Tanaman</b> berhampiran.</div></li>
+        <li><span><i class="e wiggle" style="--d:0s">🏷️</i></span><div>Racun berdaftar ada <b>no. pendaftaran</b> pada label.</div></li>
+        <li><span><i class="e wiggle" style="--d:.4s">☀️</i></span><div>Ambil gambar di tempat <b>terang</b>.</div></li>
+        <li><span><i class="e wiggle" style="--d:.8s">👩‍🌾</i></span><div>Ragu-ragu? Rujuk <b>Agen Pengembangan Tanaman</b>.</div></li>
       </ul>
-      <h3 class="known-h">🧴 Produk yang dikenali</h3>
+      <h3 class="known-h"><i class="e bob">🧴</i> Produk dikenali</h3>
       <div class="chips" id="knownList"></div>
     </section>
   </main>
 
-  <footer class="foot">🌱 © HIPER Apps · Model AI berjalan sepenuhnya dalam peranti anda · v4 (<span id="backend">-</span>)</footer>
+  <footer class="foot"><i class="e sway">🌱</i> HIPER Apps · v5 <span class="be" id="backend"></span></footer>
 
   <canvas id="work" width="224" height="224" class="hidden"></canvas>
   <script src="lib/tf.min.js?v=2"></script>
   <script src="lib/tf-backend-wasm.min.js?v=2"></script>
-  <script src="app.js?v=4"></script>
+  <script src="app.js?v=5"></script>
 </body>
 </html>

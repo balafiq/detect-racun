@@ -49,22 +49,22 @@
 
   async function init() {
     try {
-      loading("Memuatkan model AI…");
+      loading("Memuatkan…");
       if (tf.wasm && tf.wasm.setWasmPaths) tf.wasm.setWasmPaths(new URL("lib/", location.href).href);
       try { await tf.setBackend("webgl"); } catch (_) { /* guna lalai */ }
       await tf.ready();
       [model, meta] = await Promise.all([
-        tf.loadGraphModel(MODEL_URL, { onProgress: (f) => loading("Memuat turun model… " + Math.round(f * 100) + "%") }),
+        tf.loadGraphModel(MODEL_URL, { onProgress: (f) => loading("Memuatkan… " + Math.round(f * 100) + "%") }),
         fetch(META_URL).then((r) => r.json()),
       ]);
-      $("knownList").innerHTML = meta.info.filter((i) => i.berdaftar).map((i) => `<span class="chip">✅ ${i.nama}</span>`).join("");
+      $("knownList").innerHTML = meta.info.filter((i) => i.berdaftar).map((i) => `<span class="chip"><i>✅</i> ${i.nama}</span>`).join("");
       // Pilih backend yang memberi keputusan betul pada peranti ini (WebGL → WASM → CPU)
       let ok = false;
       for (const be of ["webgl", "wasm", "cpu"]) {
         try {
           if (tf.getBackend() !== be && !(await tf.setBackend(be))) continue;
           await tf.ready();
-          loading("Menyediakan model (" + be + ")…");
+          loading("Hampir siap…");
           if (await selfTest()) { ok = true; break; }
           console.warn("Ujian kendiri gagal pada backend", be);
         } catch (e) { console.warn("Backend", be, "gagal:", e); }
@@ -74,13 +74,13 @@
       ready = true;
       $("btnStart").disabled = false;
       $("btnStart").textContent = "▶ Mula Kamera";
-      setIdle("Sedia", "Mulakan kamera atau muat naik gambar");
+      setIdle("Sedia", "");
     } catch (e) {
       console.error(e);
-      $("btnStart").textContent = "⚠️ Model gagal dimuatkan";
-      setState("warn", "⚠️", "Gagal memuatkan model", String(e.message || e) + " – muat semula halaman.");
+      $("btnStart").textContent = "⚠️ Gagal dimuatkan";
+      setState("warn", "⚠️", "Gagal memuatkan model", "Muat semula halaman.");
       $("camHelp").classList.remove("hidden");
-      $("camHelpText").textContent = "Model AI gagal dimuatkan: " + (e.message || e) + ". Semak sambungan internet dan muat semula halaman.";
+      $("camHelpText").textContent = "Semak internet dan muat semula halaman.";
     }
   }
 
@@ -115,18 +115,22 @@
       return { kind: "warn", icon: "❓", label: "TIDAK DIKENALI", sub: "Kemungkinan racun tidak berdaftar. Rujuk Agen Pengembangan Tanaman dengan segera.", p: null };
     }
     if (!info.berdaftar && p >= 0.5) {
-      return { kind: "bad", icon: "⛔", label: "TIDAK BERDAFTAR", sub: `${info.jenis}. Jangan guna – laporkan kepada pihak berkuasa.`, p };
+      return { kind: "bad", icon: "⛔", label: "TIDAK BERDAFTAR", sub: "Jangan guna. Rujuk Agen Pengembangan Tanaman.", p };
     }
     if (info.berdaftar && p >= meta.probThreshold) {
       return { kind: "ok", icon: "✅", label: "BERDAFTAR", sub: `${info.nama}${info.jenis ? " · " + info.jenis : ""}`, p };
     }
-    return { kind: "warn", icon: "⚠️", label: "TIDAK PASTI", sub: `Mungkin ${info.nama}. Dekatkan kamera ke label atau semak no. pendaftaran secara manual.`, p };
+    return { kind: "warn", icon: "⚠️", label: "TIDAK PASTI", sub: `Mungkin ${info.nama}. Dekatkan kamera ke label.`, p };
   }
 
   function setState(kind, icon, label, sub, p = null) {
     const r = $("result");
     r.className = "card result " + kind;
-    $("statusIcon").textContent = icon;
+    const ic = $("statusIcon");
+    if (ic.textContent !== icon) {
+      ic.textContent = icon;
+      ic.classList.remove("pop"); void ic.offsetWidth; ic.classList.add("pop");
+    }
     $("statusLabel").textContent = label;
     $("statusSub").textContent = sub;
     $("confWrap").classList.toggle("hidden", p == null);
@@ -146,18 +150,13 @@
       pill.className = "pill " + d.kind;
       pill.textContent = d.kind === "ok" ? `✅ ${meta.info[res.prob.indexOf(Math.max(...res.prob))].nama}` : `${d.icon} ${d.label}`;
     }
-    const order = res.prob.map((p, i) => [p, i]).sort((a, b) => b[0] - a[0]);
-    $("probs").innerHTML = order.map(([p, i]) => {
-      const inf = meta.info[i];
-      return `<li><span>${inf.berdaftar ? "✅" : "⛔"} ${inf.nama}</span><div class="mini"><div style="width:${(p * 100).toFixed(1)}%"></div></div><b>${Math.round(p * 100)}%</b></li>`;
-    }).join("") + `<li><span>Keserupaan maks.</span><div></div><b>${Math.max(...res.sim).toFixed(2)}</b></li>`;
   }
 
   // ---------- Kamera ----------
   const inIframe = (() => { try { return window.self !== window.top; } catch (_) { return true; } })();
 
   function camError(msg) {
-    setState("warn", "⚠️", "Kamera tidak dapat dibuka", msg);
+    setState("warn", "⚠️", "Kamera tidak dapat dibuka", "Guna butang Ambil Gambar.");
     $("camHelp").classList.remove("hidden");
     $("camHelpText").textContent = msg;
   }
@@ -165,17 +164,17 @@
   async function startCam() {
     $("camHelp").classList.add("hidden");
     if (!ready) {
-      setState("idle", "⏳", "Model masih dimuatkan…", "Sila tunggu sehingga status 'Sedia', kemudian tekan semula.");
+      setState("idle", "⏳", "Sila tunggu…", "");
       return;
     }
     if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
       camError(inIframe
-        ? "Kamera disekat kerana aplikasi dibuka dalam halaman lain (embed). Tekan 'Buka dalam tab baharu' atau guna 'Ambil Gambar'."
-        : "Pelayar ini tidak menyokong kamera langsung (perlu HTTPS & pelayar terkini seperti Chrome/Safari). Guna 'Ambil Gambar'.");
+        ? "Kamera disekat di halaman ini. Buka dalam tab baharu."
+        : "Pelayar ini tidak menyokong kamera. Guna Ambil Gambar.");
       return;
     }
     $("btnStart").disabled = true;
-    setState("idle", "⏳", "Membuka kamera…", "Benarkan akses kamera jika diminta.");
+    setState("idle", "⏳", "Membuka kamera…", "");
     const tries = [
       { video: { facingMode: { ideal: facing }, width: { ideal: 1280 }, height: { ideal: 720 } }, audio: false },
       { video: { facingMode: facing }, audio: false },
@@ -192,14 +191,14 @@
       let msg;
       if (n === "NotAllowedError" || n === "SecurityError") {
         msg = inIframe
-          ? "Akses kamera disekat oleh halaman embed (cth. Google Sites). Tekan 'Buka dalam tab baharu' atau guna 'Ambil Gambar'."
-          : "Akses kamera ditolak. Tekan ikon 🔒 di sebelah alamat laman → Kebenaran → Kamera → Benarkan, kemudian muat semula halaman.";
+          ? "Kamera disekat di halaman ini. Buka dalam tab baharu."
+          : "Akses kamera ditolak. Benarkan kamera dalam tetapan pelayar, kemudian muat semula.";
       } else if (n === "NotFoundError" || n === "OverconstrainedError") {
-        msg = "Tiada kamera ditemui pada peranti ini. Guna 'Ambil Gambar' atau 'Muat Naik Gambar'.";
+        msg = "Tiada kamera ditemui. Guna Ambil Gambar.";
       } else if (n === "NotReadableError" || n === "AbortError") {
-        msg = "Kamera sedang digunakan oleh aplikasi lain. Tutup aplikasi lain (cth. WhatsApp/Zoom) dan cuba lagi.";
+        msg = "Kamera sedang digunakan aplikasi lain. Tutup dan cuba lagi.";
       } else {
-        msg = "Ralat kamera" + (n ? " (" + n + ")" : "") + ". Guna 'Ambil Gambar' atau 'Muat Naik Gambar'.";
+        msg = "Kamera tidak dapat dibuka. Guna Ambil Gambar.";
       }
       camError(msg);
       return;
@@ -214,7 +213,7 @@
     $("btnStart").classList.add("stop");
     $("btnFlip").disabled = false;
     running = true; ema = null;
-    setState("idle", "🔍", "Mengimbas…", "Letakkan label racun di dalam kotak.");
+    setState("idle", "🔍", "Mengimbas…", "Halakan ke label racun");
     loop();
   }
 
@@ -265,7 +264,7 @@
       render(res);
       $("result").scrollIntoView({ behavior: "smooth", block: "nearest" });
     };
-    img.onerror = () => setState("warn", "⚠️", "Gambar tidak dapat dibaca", "Cuba format JPG atau PNG.");
+    img.onerror = () => setState("warn", "⚠️", "Gambar tidak dapat dibaca", "Cuba gambar lain.");
     img.src = url;
   }
 
@@ -276,7 +275,7 @@
     $("panel-camera").classList.toggle("hidden", !cam);
     $("panel-upload").classList.toggle("hidden", cam);
     if (!cam) stopCam();
-    if (ready) setIdle("Sedia", cam ? "Mulakan kamera untuk mengimbas" : "Pilih gambar untuk dianalisis");
+    if (ready) setIdle("Sedia", "");
   }));
   $("btnStart").addEventListener("click", () => (running ? stopCam() : startCam()));
   $("btnFlip").addEventListener("click", async () => {
