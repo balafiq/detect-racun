@@ -180,6 +180,10 @@ def main():
         "simThreshold": sim_thr,
         "probThreshold": 0.55,
     }
+    # Ujian kendiri: pelayar membandingkan output ini untuk mengesan backend (WebGL) yang rosak
+    gi, gj, gc = np.arange(IMG).reshape(IMG, 1, 1), np.arange(IMG).reshape(1, IMG, 1), np.arange(3).reshape(1, 1, 3)
+    tp, ts = full.predict(((gi * 7 + gj * 13 + gc * 50) % 256).astype(np.float32)[None], verbose=0)
+    meta["selfTest"] = {"prob": [round(float(v), 5) for v in tp[0]], "sim": [round(float(v), 5) for v in ts[0]]}
     json.dump(meta, open(os.path.join(a.out, "metadata.json"), "w"), indent=2, ensure_ascii=False)
     print("siap")
 

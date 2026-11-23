@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <meta name="theme-color" content="#1b5e20" />
   <title>HIPER Apps – Pengesan Racun Berdaftar</title>
-  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="style.css?v=2" />
 </head>
 <body>
   <header class="topbar">
@@ -41,7 +41,7 @@
         </div>
       </div>
       <div class="actions">
-        <button class="btn primary" id="btnStart">▶ Mula Kamera</button>
+        <button class="btn primary" id="btnStart" disabled>⏳ Memuatkan…</button>
         <button class="btn" id="btnFlip" disabled>🔄 Tukar Kamera</button>
       </div>
       <label class="btn snap">📸 Ambil Gambar (kamera telefon)
@@ -95,10 +95,11 @@
     </section>
   </main>
 
-  <footer class="foot">© HIPER Apps · Model AI berjalan sepenuhnya dalam peranti anda</footer>
+  <footer class="foot">© HIPER Apps · Model AI berjalan sepenuhnya dalam peranti anda · v2 (<span id="backend">-</span>)</footer>
 
   <canvas id="work" width="224" height="224" class="hidden"></canvas>
-  <script src="lib/tf.min.js"></script>
-  <script src="app.js"></script>
+  <script src="lib/tf.min.js?v=2"></script>
+  <script src="lib/tf-backend-wasm.min.js?v=2"></script>
+  <script src="app.js?v=2"></script>
 </body>
 </html>

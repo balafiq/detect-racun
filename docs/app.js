@@ -15,24 +15,72 @@
   const ctx = work.getContext("2d", { willReadFrequently: true });
 
   // ---------- Model ----------
+  function loading(text) {
+    $("btnStart").disabled = true;
+    $("btnStart").textContent = "⏳ " + text;
+    $("statusSub").textContent = text;
+  }
+
+  /** Input ujian deterministik (sama seperti dalam training/train.py) */
+  function selfTestInput() {
+    return tf.tidy(() => {
+      const n = meta.imageSize;
+      const i = tf.range(0, n).reshape([n, 1, 1]).mul(7);
+      const j = tf.range(0, n).reshape([1, n, 1]).mul(13);
+      const c = tf.tensor1d([0, 50, 100]).reshape([1, 1, 3]);
+      return tf.mod(i.add(j).add(c), 256).toFloat().expandDims(0);
+    });
+  }
+
+  /** Jalankan model pada input ujian; pastikan keputusan sama seperti semasa latihan */
+  async function selfTest() {
+    const x = selfTestInput();
+    const outs = model.execute(x);
+    x.dispose();
+    const arrs = await Promise.all(outs.map((t) => t.data()));
+    outs.forEach((t) => t.dispose());
+    const ref = meta.selfTest.prob;
+    const diff = (a) => Math.max(...Array.from(a).map((v, k) => Math.abs(v - ref[k])));
+    const d0 = diff(arrs[0]), d1 = diff(arrs[1]);
+    probIdx = d0 <= d1 ? 0 : 1;
+    const d = Math.min(d0, d1);
+    return Number.isFinite(d) && d < 0.05;
+  }
+
   async function init() {
     try {
+      loading("Memuatkan model AI…");
+      if (tf.wasm && tf.wasm.setWasmPaths) tf.wasm.setWasmPaths(new URL("lib/", location.href).href);
+      try { await tf.setBackend("webgl"); } catch (_) { /* guna lalai */ }
       await tf.ready();
       [model, meta] = await Promise.all([
-        tf.loadGraphModel(MODEL_URL, { onProgress: (f) => { $("statusSub").textContent = "Memuat turun model AI… " + Math.round(f * 100) + "% (kali pertama sahaja)"; } }),
+        tf.loadGraphModel(MODEL_URL, { onProgress: (f) => loading("Memuat turun model… " + Math.round(f * 100) + "%") }),
         fetch(META_URL).then((r) => r.json()),
       ]);
       $("knownList").textContent = meta.info.filter((i) => i.berdaftar).map((i) => i.nama).join(", ");
-      // panaskan model & kenal pasti output kebarangkalian (jumlah baris = 1)
-      const outs = model.execute(tf.zeros([1, meta.imageSize, meta.imageSize, 3]));
-      const sums = await Promise.all(outs.map((t) => t.sum().data()));
-      probIdx = Math.abs(sums[0][0] - 1) < Math.abs(sums[1][0] - 1) ? 0 : 1;
-      outs.forEach((t) => t.dispose());
+      // Pilih backend yang memberi keputusan betul pada peranti ini (WebGL → WASM → CPU)
+      let ok = false;
+      for (const be of ["webgl", "wasm", "cpu"]) {
+        try {
+          if (tf.getBackend() !== be && !(await tf.setBackend(be))) continue;
+          await tf.ready();
+          loading("Menyediakan model (" + be + ")…");
+          if (await selfTest()) { ok = true; break; }
+          console.warn("Ujian kendiri gagal pada backend", be);
+        } catch (e) { console.warn("Backend", be, "gagal:", e); }
+      }
+      if (!ok) throw new Error("Model tidak dapat dijalankan dengan betul pada peranti ini.");
+      $("backend").textContent = tf.getBackend();
       ready = true;
+      $("btnStart").disabled = false;
+      $("btnStart").textContent = "▶ Mula Kamera";
       setIdle("Sedia", "Mulakan kamera atau muat naik gambar");
     } catch (e) {
       console.error(e);
-      setState("warn", "⚠️", "Gagal memuatkan model", String(e.message || e));
+      $("btnStart").textContent = "⚠️ Model gagal dimuatkan";
+      setState("warn", "⚠️", "Gagal memuatkan model", String(e.message || e) + " – muat semula halaman.");
+      $("camHelp").classList.remove("hidden");
+      $("camHelpText").textContent = "Model AI gagal dimuatkan: " + (e.message || e) + ". Semak sambungan internet dan muat semula halaman.";
     }
   }
 
@@ -215,6 +263,7 @@
       // Test-time augmentation: potongan tengah penuh + zum 85% + zum 70%
       const res = await predict([drawCrop(img, w, h, 1), drawCrop(img, w, h, 0.85), drawCrop(img, w, h, 0.7)]);
       render(res);
+      $("result").scrollIntoView({ behavior: "smooth", block: "nearest" });
     };
     img.onerror = () => setState("warn", "⚠️", "Gambar tidak dapat dibaca", "Cuba format JPG atau PNG.");
     img.src = url;
