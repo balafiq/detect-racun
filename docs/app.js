@@ -57,7 +57,7 @@
         tf.loadGraphModel(MODEL_URL, { onProgress: (f) => loading("Memuat turun model… " + Math.round(f * 100) + "%") }),
         fetch(META_URL).then((r) => r.json()),
       ]);
-      $("knownList").textContent = meta.info.filter((i) => i.berdaftar).map((i) => i.nama).join(", ");
+      $("knownList").innerHTML = meta.info.filter((i) => i.berdaftar).map((i) => `<span class="chip">✅ ${i.nama}</span>`).join("");
       // Pilih backend yang memberi keputusan betul pada peranti ini (WebGL → WASM → CPU)
       let ok = false;
       for (const be of ["webgl", "wasm", "cpu"]) {

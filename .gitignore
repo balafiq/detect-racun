@@ -2,3 +2,4 @@ training/model.keras
 training/_savedmodel/
 __pycache__/
 racun-app.zip
+preview/
