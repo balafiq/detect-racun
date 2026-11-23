@@ -1,0 +1,51 @@
+{
+  "labels": [
+    "amistar",
+    "Antracol 70 WP",
+    "Basta 15",
+    "Dithane Gr",
+    "ecomax",
+    "Kencis",
+    "Racun tak berdaftar"
+  ],
+  "info": [
+    {
+      "nama": "Amistar",
+      "jenis": "Racun kulat (Azoxystrobin)",
+      "berdaftar": true
+    },
+    {
+      "nama": "Antracol 70 WP",
+      "jenis": "Racun kulat (Propineb)",
+      "berdaftar": true
+    },
+    {
+      "nama": "Basta 15",
+      "jenis": "Racun rumpai (Glufosinate-ammonium)",
+      "berdaftar": true
+    },
+    {
+      "nama": "Dithane GR",
+      "jenis": "Racun kulat (Mancozeb)",
+      "berdaftar": true
+    },
+    {
+      "nama": "Ecomax",
+      "jenis": "Racun makhluk perosak",
+      "berdaftar": true
+    },
+    {
+      "nama": "Kencis",
+      "jenis": "Racun serangga (Cypermethrin)",
+      "berdaftar": true
+    },
+    {
+      "nama": "Racun tidak berdaftar",
+      "jenis": "Tiada label / tiada no. pendaftaran",
+      "berdaftar": false
+    }
+  ],
+  "imageSize": 224,
+  "simThreshold": 0.4,
+  "probThreshold": 0.55
+}

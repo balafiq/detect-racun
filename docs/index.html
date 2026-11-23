@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#1b5e20" />
+  <title>HIPER Apps – Pengesan Racun Berdaftar</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <span class="logo" aria-hidden="true">🌿</span>
+      <div>
+        <h1>HIPER Apps</h1>
+        <p>Pengesan Racun Berdaftar &amp; Tidak Berdaftar</p>
+      </div>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <section class="card intro">
+      <h2>Imbas botol / bungkusan racun</h2>
+      <p>Halakan kamera ke label racun atau muat naik gambar. Aplikasi akan mengenal pasti sama ada racun itu
+        <b class="ok-text">BERDAFTAR</b> atau <b class="bad-text">TIDAK BERDAFTAR</b>.</p>
+    </section>
+
+    <div class="tabs" role="tablist">
+      <button class="tab active" data-tab="camera" role="tab" aria-selected="true">📷 Kamera</button>
+      <button class="tab" data-tab="upload" role="tab" aria-selected="false">🖼️ Muat Naik Gambar</button>
+    </div>
+
+    <section class="card" id="panel-camera">
+      <div class="viewer">
+        <video id="video" playsinline muted></video>
+        <div class="guide" aria-hidden="true"></div>
+        <div class="pill hidden" id="pill"></div>
+        <div class="placeholder" id="camPlaceholder">
+          <span>📷</span>
+          <p>Kamera belum dihidupkan</p>
+        </div>
+      </div>
+      <div class="actions">
+        <button class="btn primary" id="btnStart">▶ Mula Kamera</button>
+        <button class="btn" id="btnFlip" disabled>🔄 Tukar Kamera</button>
+      </div>
+      <p class="hint">Letakkan label racun di dalam kotak. Pastikan cahaya mencukupi.</p>
+    </section>
+
+    <section class="card hidden" id="panel-upload">
+      <label class="drop" id="drop">
+        <input type="file" id="file" accept="image/*" />
+        <img id="preview" alt="" class="hidden" />
+        <div id="dropText">
+          <span>⬆️</span>
+          <p><b>Pilih gambar</b> atau seret ke sini</p>
+          <small>JPG / PNG</small>
+        </div>
+      </label>
+    </section>
+
+    <section class="card result idle" id="result" aria-live="polite">
+      <div class="status" id="status">
+        <span class="icon" id="statusIcon">⏳</span>
+        <div>
+          <div class="label" id="statusLabel">Memuatkan model…</div>
+          <div class="sub" id="statusSub">Sila tunggu sebentar</div>
+        </div>
+      </div>
+      <div class="conf hidden" id="confWrap">
+        <div class="conf-row"><span>Keyakinan</span><b id="confPct">0%</b></div>
+        <div class="bar"><div id="confBar"></div></div>
+      </div>
+      <details class="detail">
+        <summary>Lihat butiran ramalan</summary>
+        <ul id="probs"></ul>
+      </details>
+    </section>
+
+    <section class="card tips">
+      <h3>Panduan</h3>
+      <ul>
+        <li>Racun berdaftar mempunyai <b>label lengkap</b> dan <b>nombor pendaftaran</b> Lembaga Racun Makhluk Perosak (LRMP).</li>
+        <li>Botol tanpa label, label tulisan tangan atau tanpa nombor pendaftaran berkemungkinan <b>tidak berdaftar</b>.</li>
+        <li>Keputusan <b>"Tidak Pasti"</b> bermaksud produk tiada dalam pangkalan data aplikasi – sila semak label secara manual.</li>
+      </ul>
+      <p class="small">Produk dikenali: <span id="knownList"></span></p>
+    </section>
+  </main>
+
+  <footer class="foot">© HIPER Apps · Model AI berjalan sepenuhnya dalam peranti anda</footer>
+
+  <canvas id="work" width="224" height="224" class="hidden"></canvas>
+  <script src="lib/tf.min.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
