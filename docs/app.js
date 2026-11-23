@@ -112,7 +112,7 @@
     const p = prob[top];
     const bestSim = Math.max(...sim);
     if (bestSim < meta.simThreshold) {
-      return { kind: "warn", icon: "❓", label: "TIDAK DIKENALI", sub: "Tiada racun dikesan / produk tiada dalam pangkalan data. Halakan kamera ke label.", p: null };
+      return { kind: "warn", icon: "❓", label: "TIDAK DIKENALI", sub: "Kemungkinan racun tidak berdaftar. Rujuk Agen Pengembangan Tanaman dengan segera.", p: null };
     }
     if (!info.berdaftar && p >= 0.5) {
       return { kind: "bad", icon: "⛔", label: "TIDAK BERDAFTAR", sub: `${info.jenis}. Jangan guna – laporkan kepada pihak berkuasa.`, p };
