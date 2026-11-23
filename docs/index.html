@@ -32,7 +32,7 @@
 
     <section class="card" id="panel-camera">
       <div class="viewer">
-        <video id="video" playsinline muted></video>
+        <video id="video" autoplay playsinline muted></video>
         <div class="guide" aria-hidden="true"></div>
         <div class="pill hidden" id="pill"></div>
         <div class="placeholder" id="camPlaceholder">
@@ -44,6 +44,13 @@
         <button class="btn primary" id="btnStart">▶ Mula Kamera</button>
         <button class="btn" id="btnFlip" disabled>🔄 Tukar Kamera</button>
       </div>
+      <label class="btn snap">📸 Ambil Gambar (kamera telefon)
+        <input type="file" id="snap" accept="image/*" capture="environment" />
+      </label>
+      <div class="camhelp hidden" id="camHelp">
+        <p id="camHelpText"></p>
+      </div>
+      <a class="btn opentab hidden" id="openTab" target="_blank" rel="noopener">↗ Buka dalam tab baharu</a>
       <p class="hint">Letakkan label racun di dalam kotak. Pastikan cahaya mencukupi.</p>
     </section>
 

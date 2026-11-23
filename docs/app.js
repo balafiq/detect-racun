@@ -19,7 +19,7 @@
     try {
       await tf.ready();
       [model, meta] = await Promise.all([
-        tf.loadGraphModel(MODEL_URL),
+        tf.loadGraphModel(MODEL_URL, { onProgress: (f) => { $("statusSub").textContent = "Memuat turun model AI… " + Math.round(f * 100) + "% (kali pertama sahaja)"; } }),
         fetch(META_URL).then((r) => r.json()),
       ]);
       $("knownList").textContent = meta.info.filter((i) => i.berdaftar).map((i) => i.nama).join(", ");
@@ -106,27 +106,67 @@
   }
 
   // ---------- Kamera ----------
+  const inIframe = (() => { try { return window.self !== window.top; } catch (_) { return true; } })();
+
+  function camError(msg) {
+    setState("warn", "⚠️", "Kamera tidak dapat dibuka", msg);
+    $("camHelp").classList.remove("hidden");
+    $("camHelpText").textContent = msg;
+  }
+
   async function startCam() {
-    if (!ready) return;
-    try {
-      stream = await navigator.mediaDevices.getUserMedia({
-        video: { facingMode: { ideal: facing }, width: { ideal: 1280 }, height: { ideal: 720 } },
-        audio: false,
-      });
-    } catch (e) {
-      setState("warn", "⚠️", "Kamera tidak dapat dibuka", "Benarkan akses kamera atau gunakan Muat Naik Gambar.");
+    $("camHelp").classList.add("hidden");
+    if (!ready) {
+      setState("idle", "⏳", "Model masih dimuatkan…", "Sila tunggu sehingga status 'Sedia', kemudian tekan semula.");
+      return;
+    }
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+      camError(inIframe
+        ? "Kamera disekat kerana aplikasi dibuka dalam halaman lain (embed). Tekan 'Buka dalam tab baharu' atau guna 'Ambil Gambar'."
+        : "Pelayar ini tidak menyokong kamera langsung (perlu HTTPS & pelayar terkini seperti Chrome/Safari). Guna 'Ambil Gambar'.");
+      return;
+    }
+    $("btnStart").disabled = true;
+    setState("idle", "⏳", "Membuka kamera…", "Benarkan akses kamera jika diminta.");
+    const tries = [
+      { video: { facingMode: { ideal: facing }, width: { ideal: 1280 }, height: { ideal: 720 } }, audio: false },
+      { video: { facingMode: facing }, audio: false },
+      { video: true, audio: false },
+    ];
+    let err = null;
+    for (const c of tries) {
+      try { stream = await navigator.mediaDevices.getUserMedia(c); err = null; break; }
+      catch (e) { err = e; if (e && (e.name === "NotAllowedError" || e.name === "SecurityError")) break; }
+    }
+    $("btnStart").disabled = false;
+    if (!stream) {
+      const n = err && err.name;
+      let msg;
+      if (n === "NotAllowedError" || n === "SecurityError") {
+        msg = inIframe
+          ? "Akses kamera disekat oleh halaman embed (cth. Google Sites). Tekan 'Buka dalam tab baharu' atau guna 'Ambil Gambar'."
+          : "Akses kamera ditolak. Tekan ikon 🔒 di sebelah alamat laman → Kebenaran → Kamera → Benarkan, kemudian muat semula halaman.";
+      } else if (n === "NotFoundError" || n === "OverconstrainedError") {
+        msg = "Tiada kamera ditemui pada peranti ini. Guna 'Ambil Gambar' atau 'Muat Naik Gambar'.";
+      } else if (n === "NotReadableError" || n === "AbortError") {
+        msg = "Kamera sedang digunakan oleh aplikasi lain. Tutup aplikasi lain (cth. WhatsApp/Zoom) dan cuba lagi.";
+      } else {
+        msg = "Ralat kamera" + (n ? " (" + n + ")" : "") + ". Guna 'Ambil Gambar' atau 'Muat Naik Gambar'.";
+      }
+      camError(msg);
       return;
     }
     const v = $("video");
     v.srcObject = stream;
-    await v.play();
+    try { await v.play(); } catch (e) { /* sesetengah pelayar perlukan sentuhan; video tetap dimainkan selepas ini */ }
     const settings = stream.getVideoTracks()[0].getSettings();
-    v.classList.toggle("mirror", settings.facingMode === "user" || (!settings.facingMode && facing === "user"));
+    v.classList.toggle("mirror", settings.facingMode === "user");
     $("camPlaceholder").classList.add("hidden");
     $("btnStart").textContent = "■ Henti Kamera";
     $("btnStart").classList.add("stop");
     $("btnFlip").disabled = false;
     running = true; ema = null;
+    setState("idle", "🔍", "Mengimbas…", "Letakkan label racun di dalam kotak.");
     loop();
   }
 
@@ -195,6 +235,17 @@
     stopCam(); await startCam();
   });
   $("file").addEventListener("change", (e) => handleFile(e.target.files[0]));
+  // Ambil gambar dengan aplikasi kamera telefon (berfungsi walaupun kamera langsung disekat)
+  $("snap").addEventListener("change", (e) => {
+    const f = e.target.files[0];
+    if (!f) return;
+    stopCam();
+    document.querySelector('[data-tab=upload]').click();
+    handleFile(f);
+    e.target.value = "";
+  });
+  $("openTab").href = location.href;
+  if (inIframe) $("openTab").classList.remove("hidden");
   const drop = $("drop");
   ["dragenter", "dragover"].forEach((ev) => drop.addEventListener(ev, (e) => { e.preventDefault(); drop.classList.add("over"); }));
   ["dragleave", "drop"].forEach((ev) => drop.addEventListener(ev, (e) => { e.preventDefault(); drop.classList.remove("over"); }));

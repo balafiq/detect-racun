@@ -94,3 +94,8 @@ body {
 .tips ul { margin: 0; padding-left: 18px; line-height: 1.6; color: #344; }
 .small { font-size: 13px; color: var(--muted); margin-bottom: 0; }
 .foot { text-align: center; color: var(--muted); font-size: 12px; padding: 6px 0 24px; }
+.snap { display: block; position: relative; margin-top: 10px; text-align: center; overflow: hidden; }
+.snap input { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
+.opentab { display: block; margin-top: 10px; text-align: center; text-decoration: none; }
+.camhelp { margin-top: 10px; background: var(--warn-bg); border: 1px solid #ffcc80; border-radius: 12px; padding: 10px 12px; font-size: 14px; }
+.camhelp p { margin: 0; }
