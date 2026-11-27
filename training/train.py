@@ -206,7 +206,7 @@ def main():
         "info": [INFO.get(c, {"nama": c, "jenis": "", "berdaftar": c != UNREG}) for c in classes],
         "imageSize": IMG,
         "simThreshold": sim_thr,
-        "probThreshold": 0.55,
+        "probThreshold": 0.5,
     }
     # Ujian kendiri: pelayar membandingkan output ini untuk mengesan backend (WebGL) yang rosak
     gi, gj, gc = np.arange(IMG).reshape(IMG, 1, 1), np.arange(IMG).reshape(1, IMG, 1), np.arange(3).reshape(1, 1, 3)

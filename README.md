@@ -4,7 +4,7 @@ Aplikasi web (telefon / komputer) yang mengimbas botol atau bungkusan racun mela
 dan memaparkan sama ada racun itu **BERDAFTAR**, **TIDAK BERDAFTAR**, atau **TIDAK DIKENALI / TIDAK PASTI**.
 Model AI berjalan sepenuhnya dalam pelayar, jadi tiada gambar dihantar ke pelayan.
 
-Produk yang dikenali: Amistar, Antracol 70 WP, Basta 15, Dithane GR, Ecomax, Kencis, serta botol tanpa label (racun tidak berdaftar).
+Produk yang dikenali (16 racun berdaftar): Amistar, Antracol 70 WP, Basta 15, BL Sodium Chlorate, Confidor, Decis 250, Dithane GR, Ecomax, Kencis, Kendazim 420, Kenlly 20 WG, Regent 50 SC, Ridomil G43.9 SL, Score, Vintage 21.7 EC, Zavita 25 EC – serta botol tanpa label (racun tidak berdaftar).
 
 ## Cara guna / hos
 
@@ -43,7 +43,7 @@ Penanda aras: 149 imej latihan yang dirosakkan (gelap/terang, senget, kabur, diz
 
 ## Melatih semula (tambah produk / tambah gambar)
 
-1. Tambah kelas atau gambar dalam Teachable Machine, kemudian **Save project to file** (`.tm`).
+1. Tambah gambar dalam `training/data/tambahan/<Nama Racun>/` (satu folder bagi setiap racun), **atau** tambah kelas dalam Teachable Machine kemudian **Save project to file** (`.tm`).
 2. Simpan fail itu di `training/data/hiper_app.tm`.
 3. Kemas kini maklumat paparan produk dalam `INFO` di `training/train.py`.
 4. Jalankan:

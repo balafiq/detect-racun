@@ -3,9 +3,19 @@
     "amistar",
     "Antracol 70 WP",
     "Basta 15",
+    "BL Sodium Chlorate",
+    "Confidor",
+    "Decis 250",
     "Dithane Gr",
     "ecomax",
     "Kencis",
+    "Kendazim 420",
+    "Kenlly 20 WG",
+    "Regent 50 SC",
+    "Ridomil G43.9 SL",
+    "Score",
+    "Vintage 21.7 EC",
+    "Zavita 25 EC",
     "Racun tak berdaftar"
   ],
   "info": [
@@ -25,6 +35,21 @@
       "berdaftar": true
     },
     {
+      "nama": "BL Sodium Chlorate",
+      "jenis": "Racun rumpai (Sodium chlorate)",
+      "berdaftar": true
+    },
+    {
+      "nama": "Confidor",
+      "jenis": "Racun serangga (Imidacloprid)",
+      "berdaftar": true
+    },
+    {
+      "nama": "Decis 250",
+      "jenis": "Racun serangga (Deltamethrin)",
+      "berdaftar": true
+    },
+    {
       "nama": "Dithane GR",
       "jenis": "Racun kulat (Mancozeb)",
       "berdaftar": true
@@ -40,6 +65,41 @@
       "berdaftar": true
     },
     {
+      "nama": "Kendazim 420",
+      "jenis": "Racun kulat (Carbendazim)",
+      "berdaftar": true
+    },
+    {
+      "nama": "Kenlly 20 WG",
+      "jenis": "Racun rumpai (Metsulfuron-metil)",
+      "berdaftar": true
+    },
+    {
+      "nama": "Regent 50 SC",
+      "jenis": "Racun serangga (Fipronil)",
+      "berdaftar": true
+    },
+    {
+      "nama": "Ridomil G43.9 SL",
+      "jenis": "Racun kulat",
+      "berdaftar": true
+    },
+    {
+      "nama": "Score",
+      "jenis": "Racun kulat (Difenoconazole)",
+      "berdaftar": true
+    },
+    {
+      "nama": "Vintage 21.7 EC",
+      "jenis": "Racun makhluk perosak",
+      "berdaftar": true
+    },
+    {
+      "nama": "Zavita 25 EC",
+      "jenis": "Racun kulat (Difenoconazole)",
+      "berdaftar": true
+    },
+    {
       "nama": "Racun tidak berdaftar",
       "jenis": "Tiada label / tiada no. pendaftaran",
       "berdaftar": false
@@ -47,25 +107,45 @@
   ],
   "imageSize": 224,
   "simThreshold": 0.4,
-  "probThreshold": 0.55,
+  "probThreshold": 0.5,
   "selfTest": {
     "prob": [
-      0.16202,
-      0.08539,
-      0.04342,
-      0.05865,
-      0.13701,
-      0.16115,
-      0.35237
+      0.05851,
+      0.05263,
+      0.0167,
+      0.01862,
+      0.00631,
+      0.03062,
+      0.03006,
+      0.03893,
+      0.03202,
+      0.03926,
+      0.06758,
+      0.0414,
+      0.01775,
+      0.16357,
+      0.07347,
+      0.06555,
+      0.24702
     ],
     "sim": [
       0.03164,
       -0.01106,
       0.00189,
-      -0.00647,
-      0.02849,
-      -0.01148,
-      0.0845
+      -0.05052,
+      -0.02283,
+      -0.01429,
+      -0.00563,
+      0.02761,
+      -0.03531,
+      -0.0345,
+      -0.00791,
+      -0.0134,
+      -0.0176,
+      0.03301,
+      -0.01387,
+      -0.01768,
+      0.08384
     ]
   }
 }
