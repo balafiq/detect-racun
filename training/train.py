@@ -30,8 +30,30 @@ INFO = {
     "Kencis": {"nama": "Kencis", "jenis": "Racun serangga (Cypermethrin)", "berdaftar": True},
     "amistar": {"nama": "Amistar", "jenis": "Racun kulat (Azoxystrobin)", "berdaftar": True},
     "ecomax": {"nama": "Ecomax", "jenis": "Racun makhluk perosak", "berdaftar": True},
+    "BL Sodium Chlorate": {"nama": "BL Sodium Chlorate", "jenis": "Racun rumpai (Sodium chlorate)", "berdaftar": True},
+    "Confidor": {"nama": "Confidor", "jenis": "Racun serangga (Imidacloprid)", "berdaftar": True},
+    "Decis 250": {"nama": "Decis 250", "jenis": "Racun serangga (Deltamethrin)", "berdaftar": True},
+    "Kendazim 420": {"nama": "Kendazim 420", "jenis": "Racun kulat (Carbendazim)", "berdaftar": True},
+    "Kenlly 20 WG": {"nama": "Kenlly 20 WG", "jenis": "Racun rumpai (Metsulfuron-metil)", "berdaftar": True},
+    "Regent 50 SC": {"nama": "Regent 50 SC", "jenis": "Racun serangga (Fipronil)", "berdaftar": True},
+    "Ridomil G43.9 SL": {"nama": "Ridomil G43.9 SL", "jenis": "Racun kulat", "berdaftar": True},
+    "Score": {"nama": "Score", "jenis": "Racun kulat (Difenoconazole)", "berdaftar": True},
+    "Vintage 21.7 EC": {"nama": "Vintage 21.7 EC", "jenis": "Racun makhluk perosak", "berdaftar": True},
+    "Zavita 25 EC": {"nama": "Zavita 25 EC", "jenis": "Racun kulat (Difenoconazole)", "berdaftar": True},
     UNREG: {"nama": "Racun tidak berdaftar", "jenis": "Tiada label / tiada no. pendaftaran", "berdaftar": False},
 }
+
+
+def load_folders(root, data):
+    """Tambah gambar dari root/<Nama Kelas>/*.jpg (nama folder = nama kelas)."""
+    for d in sorted(glob.glob(os.path.join(root, "*"))):
+        if not os.path.isdir(d):
+            continue
+        c = os.path.basename(d)
+        for f in sorted(glob.glob(os.path.join(d, "*"))):
+            if f.lower().endswith((".jpg", ".jpeg", ".png")):
+                data.setdefault(c, []).append(Image.open(f).convert("RGB"))
+    return data
 
 
 def load_tm(path):
@@ -118,9 +140,12 @@ def main():
     ap.add_argument("--extra", nargs="*", default=[], help="folder ujian luar: folder=kelas")
     ap.add_argument("--aug", type=int, default=15)
     ap.add_argument("--cv", action="store_true")
+    ap.add_argument("--data", nargs="*", default=[os.path.join(os.path.dirname(__file__), "data", "tambahan")], help="folder gambar tambahan: <folder>/<Nama Kelas>/*.jpg")
     a = ap.parse_args()
 
     data = load_tm(a.tm)
+    for root in a.data:
+        load_folders(root, data)
     classes = sorted(data, key=lambda c: (c == UNREG, c.lower()))
     print({c: len(v) for c, v in data.items()})
     ims = [im for c in classes for im in data[c]]
@@ -139,6 +164,9 @@ def main():
             p = head.predict(embed(backbone, te_ims), verbose=0).argmax(1)
             p0 = head.predict(embed(backbone, [ims[i] for i in te]), verbose=0).argmax(1)
             accs.append(((p0 == y[te]).mean(), (p == y[te]).mean()))
+            for i, pp in zip(te, p):
+                if pp != y[i]:
+                    print(f"   salah: {classes[y[i]]} -> {classes[pp]}")
             print(f"fold {k}: asal={accs[-1][0]:.3f} diubah={accs[-1][1]:.3f}")
         print("purata CV (asal, diubah):", np.mean(accs, 0))
 
